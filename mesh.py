@@ -1,9 +1,9 @@
 import numpy as np
 
 class Mesh:
-    def __init__(self, nx):
+    def __init__(self, nx, spacer):
         self.nx = nx
-        self.dx = np.full(nx, fill_value=1/nx)
+        self.dx = spacer(nx)
         self.Cf = np.append(0, np.cumsum(self.dx))
         self.C = [0.5*(l+r) for l, r in zip(self.Cf[:-1], self.Cf[1:])]
         self.cells = len(self.C)

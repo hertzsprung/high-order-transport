@@ -5,14 +5,15 @@ from mesh import *
 from ddt import *
 from div import *
 from interpolate import *
+from spacer import *
 
 class SineWave:
     def tracer(self, mesh, i):
        return np.sin(2*np.pi*mesh.C[i])
 
 class Integration:
-    def __init__(self, nx, Co, u, tracer, ddt, interpolation):
-        self.mesh = Mesh(nx)
+    def __init__(self, mesh, Co, u, tracer, ddt, interpolation):
+        self.mesh = mesh
         self.tracer = tracer
         self.u = u
         self.dt = u*np.min(self.mesh.dx)*Co
@@ -22,19 +23,19 @@ class Integration:
     def integrate(self, endTime):
         rho = ScalarField.initialise(self.mesh, self.tracer)
         rhoAnalytic = rho
-        rho.dumpTo('build/0.dat')
 
         t = 0
         while t < endTime:
+            rho.dumpTo('build/{t}.dat'.format(t=t))
             rho = self.ddt(rho, -self.div, self.dt) 
             t += self.dt
-            rho.dumpTo('build/{t}.dat'.format(t=t))
 
         self.numeric = rho
         self.analytic = rhoAnalytic
         self.difference = rho - rhoAnalytic
 
-        self.difference.dumpTo('build/{t}.diff.dat'.format(t=t))
+        rho.dumpTo('build/1.dat')
+        self.difference.dumpTo('build/1.diff.dat')
 
     def l2error(self):
         differenceSquared = 0
@@ -51,8 +52,9 @@ def orderOfConvergence(nxs):
     errors = []
 
     for nx in nxs:
+        print(nx)
         integration = Integration(
-                nx=nx,
+                mesh=Mesh(nx, SmoothNonuniform()),
                 Co=0.5,
                 u=1,
                 tracer=SineWave().tracer,
@@ -67,4 +69,4 @@ def orderOfConvergence(nxs):
     m, c = np.linalg.lstsq(A, np.log(errors))[0]
     return m
 
-print("convergence", orderOfConvergence(nxs=[2**n for n in range(4,9)]))
+print("convergence", orderOfConvergence(nxs=reversed([2**n for n in range(4,9)])))
