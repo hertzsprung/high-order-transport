@@ -1,2 +1,9 @@
 build
 __pycache__
+*.aux
+*.bbl
+*.bib
+*.blg
+*.log
+*.out
+high-order-transport.pdf

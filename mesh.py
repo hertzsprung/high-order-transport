@@ -1,9 +1,12 @@
 import numpy as np
 
+'''
+A periodic domain with the left-most cell and the left-most face having index 0.
+'''
 class Mesh:
-    def __init__(self, nx, spacer):
+    def __init__(self, nx, spacing):
         self.nx = nx
-        self.dx = spacer(nx)
+        self.dx = spacing(nx)
         self.Cf = np.append(0, np.cumsum(self.dx))
         self.C = [0.5*(l+r) for l, r in zip(self.Cf[:-1], self.Cf[1:])]
         self.cells = len(self.C)

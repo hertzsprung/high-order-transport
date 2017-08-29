@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{bm}
+\usepackage[colorlinks,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{siunitx}
+\usepackage{eufrak}
+\usepackage{filecontents}
+\usepackage{natbib}
+
+\begin{filecontents}{high-order-advection.bib}
+@article{devendran2014,
+	title={A higher-order finite-volume discretization method for {Poisson's} equation in cut cell geometries},
+	author={Devendran, D and Graves, DT and Johansen, H},
+	note={arXiv preprint \href{https://arxiv.org/abs/1411.4283}{arXiv:1411.4283 [math.NA]}},
+year={2014}
+}
+\end{filecontents}
+
+\newcommand{\Mag}[1]{\lvert #1 \rvert}
+\newcommand{\vect}{\mathbf}
+\newcommand{\Sf}{\vect{S}_f}
+\newcommand{\moment}{\mathfrak{m}}
+\newcommand{\iu}{{i\mkern1mu}}
+\newcommand{\TODO}[1]{\textcolor{purple}{TODO: \emph{#1}}}
+
+\title{High-order advection}
+\author{James Shaw}
+
+\begin{document}
+\nocite{*}
+\maketitle
+
+All of this is based on the work by \citet{devendran2014}.  Starting with the flux form advection equation
+
+\begin{align}
+	\frac{\partial \phi}{\partial t} + \nabla \cdot \left( \vect{u} \phi \right) = 0
+\intertext{Integrating over a volume $V$ and using the divergence theorem}
+	\int_V \frac{\partial \phi}{\partial t} dV = - \int_{\partial V} \phi \vect{u} \cdot \vect{n} dA
+\intertext{where $\vect{n}$ is the outward unit normal vector. For a cell with faces $f$ and dividing by the volume}
+	\frac{1}{V} \int_V \frac{\partial \phi}{\partial t} dV = - \frac{1}{V} \sum_f \int_{A_f} \phi \vect{u} \cdot \vect{n} dA \label{eqn:advect}
+\intertext{Replace $\phi$ by a polynomial interpolant $\psi$}
+	\psi = \sum_{\Mag{\vect{p}} \leq P} c_{\vect{p}} \left(\vect{x} - \vect{x}_0 \right)^\vect{p} \label{eqn:interpolant}
+\end{align}
+where $c_\vect{p}$ are unknown polynomial coefficients, $\vect{x}_0$ is the face centre and $P$ is the total polynomial order.  Note that we use the multi-index notation $\Mag{\vect{p}} = p_1 + \ldots + p_n$ and
+\begin{align}
+	c_{\vect{p}} \left( \vect{x} - \vect{x}_0 \right)^\vect{p} = c_\vect{p} \prod_{d=1}^D \left( x_d - x_{0_d} \right)^{p_d}
+\end{align}
+As an example, the polynomials $\vect{p}$ in two dimensions $(x, y)$ with $\Mag{\vect{p}} \leq P$ are $(0, 0)$, $(1, 0)$ and $(0, 1)$, hence the two-dimensional polynomial interpolant for a total polynomial order $P = 1$ is
+\begin{align}
+	\psi = c_1 + c_2 \left( x - x_0 \right) + c_3 \left( y - y_0 \right)
+\end{align}
+
+Substituting \eqref{eqn:interpolant} into \eqref{eqn:advect} we obtain the following expression for the flux through face $f$
+\begin{align}
+	\int_{A_f} \phi \vect{u} \cdot \vect{n} dA = \vect{u} \cdot \Sf \sum_{\Mag{\vect{p}} \leq P} c_{\vect{p}} \int_{A_f} \left(\vect{x} - \vect{x}_0 \right)^\vect{p} dA \label{eqn:face-flux}
+\end{align}
+where $\Sf = \int_{A_f} \vect{n} dA$.  Therefore, we can calculate fluxes by finding the the polynomial coefficients $c_\vect{p}$.
+
+We establish some stencil that comprises cells in the vicinity of face $f$.  We do not impose any particular method for finding this stencil, we only insist that it contains at least as many cells as there are unknown polynomial coefficients.  In addition, we assume that the domain is periodic so that boundary conditions do not complicate our description.  For every cell in the stencil of face $f$ we require that
+\begin{align}
+	\langle \psi \rangle_V = \langle \phi \rangle_V \label{eqn:equal-volumes}
+\end{align}
+where the average over volume $V$ is
+\begin{align}
+	\langle \psi \rangle_V = \frac{1}{V} \int_V \psi dV \label{eqn:volume-average}
+\end{align}
+Using equations~\eqref{eqn:interpolant} and \eqref{eqn:volume-average} we can rewrite equation~\eqref{eqn:equal-volumes} as
+\begin{align}
+	\frac{1}{\moment_V^\vect{0}} \sum_{\Mag{\vect{p}} \leq P} c_\vect{p} \moment_V^\vect{p} = \langle \phi \rangle_V
+\end{align}
+where $\moment_V^\vect{p} = \int_V \left( \vect{x} - \vect{x}_0 \right)^\vect{p} dV$ is the $\vect{p}$th moment of volume $V$, and the zeroth moment $\moment_V^\vect{0}$ is equal to the volume.
+For $m$ polynomials and a stencil with $n$ cells we can write the linear system
+\begin{align}
+	\begin{bmatrix}
+		\moment_{V_1}^{\vect{p}_1}/\moment_{V_1}^\vect{0} & \cdots & \moment_{V_1}^{\vect{p}_m}/\moment_{V_1}^\vect{0} \\
+		\vdots & & \vdots \\
+		\moment_{V_n}^{\vect{p}_1}/\moment_{V_n}^\vect{0} & \cdots & \moment_{V_n}^{\vect{p}_m}/\moment_{V_n}^\vect{0}
+	\end{bmatrix}
+	\begin{bmatrix}
+		c_{\vect{p}_1} \\
+		\vdots \\
+		c_{\vect{p}_m}
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle \phi \rangle_{V_1} \\
+		\vdots \\
+		\langle \phi \rangle_{V_n}
+	\end{bmatrix}
+\end{align}
+where $\moment_V^{\vect{p}_1} = \moment_V^{\vect{0}} = 1$.
+Since we insist that $n \geq m$ then this system should not be underconstrained\footnote{\citet{devendran2014} say that the system is always full-rank, let's hope this is true!}.  The system can be solved to find the unknown coefficients $c_\vect{p}$ using a weighted least-squares fit.  Then we can calculate face fluxes using equation~\eqref{eqn:face-flux}.  \citet{devendran2014} control the weights used in the least-squares fit to obtain numerically stable solutions of Poisson's equation.
+
+\bibliographystyle{ametsoc2014}
+\bibliography{high-order-advection}
+
+\end{document}
