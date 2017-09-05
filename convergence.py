@@ -5,8 +5,8 @@ from mesh import *
 from ddt import *
 from div import *
 from initial import *
-from integration import *
 from interpolate import *
+from simulation import *
 from spacing import *
 from stencil import *
 
@@ -16,10 +16,10 @@ def orderOfConvergence(nxs, initialiser):
 
     for nx in nxs:
         print(nx)
-        integration = initialiser(nx)
-        integration.integrate(endTime=1)
-        dxs += [np.min(integration.mesh.dx)]
-        errors += [integration.l2error()]
+        simulation = initialiser(nx)
+        simulation.integrate(endTime=1)
+        dxs += [np.min(simulation.mesh.dx)]
+        errors += [simulation.l2error()]
 
     A = np.vstack([np.log(dxs), np.ones(len(dxs))]).T
     m, c = np.linalg.lstsq(A, np.log(errors))[0]
@@ -27,7 +27,7 @@ def orderOfConvergence(nxs, initialiser):
 
 def initialiser(nx):
     mesh = Mesh(nx, Uniform())
-    return Integration(
+    return Simulation(
             mesh=mesh,
             Co=0.5,
             u=1,

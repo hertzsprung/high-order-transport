@@ -3,14 +3,14 @@ from mesh import *
 from ddt import *
 from div import *
 from initial import *
-from integration import *
 from interpolate import *
+from simulation import *
 from spacing import *
 from stencil import *
 
 mesh = Mesh(nx=16, spacing=Uniform())
 
-integration = Integration(
+simulation = Simulation(
         mesh=mesh,
         Co=0.5,
         u=1,
@@ -19,9 +19,9 @@ integration = Integration(
         interpolation=HighOrder(mesh, Stencil([-1, 0]), order=2)
 )
 
-integration.integrate(endTime=integration.dt)
-integration.results[0].dumpTo('build/0.dat')
-integration.results[1].dumpTo('build/dt.dat')
-integration.numeric.dumpTo('build/1.dat')
-print('l2error', integration.l2error())
+simulation.integrate(endTime=simulation.dt)
+simulation.results[0].dumpTo('build/0.dat')
+simulation.results[1].dumpTo('build/dt.dat')
+simulation.numeric.dumpTo('build/1.dat')
+print('l2error', simulation.l2error())
 

@@ -2,7 +2,7 @@ import numpy as np
 from div import *
 from mesh import *
 
-class Integration:
+class Simulation:
     def __init__(self, mesh, Co, u, tracer, ddt, interpolation):
         self.mesh = mesh
         self.tracer = tracer

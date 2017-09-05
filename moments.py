@@ -28,13 +28,10 @@ class MomentsMatrix:
                         self.mesh.cellCentre(i))
                 M[row,col] /= self.mesh.dx[i % self.mesh.cells]
 
-        print(M)
         print('cond', np.linalg.cond(M))
 
         return np.linalg.pinv(M)
 
     def coefficients(self, rho, i):
         stencilValues = rho[i + self.stencil]
-#        print(self.Minv[i % self.mesh.cells])
-#        print(np.sum(self.Minv[i % self.mesh.cells]))
         return np.dot(self.Minv[i % self.mesh.cells], stencilValues)
