@@ -10,14 +10,17 @@ class Integration:
         self.dt = u*np.min(self.mesh.dx)*Co
         self.ddt = ddt
         self.div = Div(u, interpolation)
+        self.results = []
 
     def integrate(self, endTime):
         rho = ScalarField.initialise(self.mesh, self.tracer)
+        self.results.append(rho)
         rhoAnalytic = rho
 
         t = 0
         while t < endTime:
             rho = self.ddt(rho, -self.div, self.dt) 
+            self.results.append(rho)
             t += self.dt
 
         self.numeric = rho

@@ -6,6 +6,7 @@ from initial import *
 from integration import *
 from interpolate import *
 from spacing import *
+from stencil import *
 
 mesh = Mesh(nx=16, spacing=Uniform())
 
@@ -15,8 +16,12 @@ integration = Integration(
         u=1,
         tracer=SineWave().tracer,
         ddt=RungeKutta(stages=2),
-        interpolation=HighOrder(order=2, mesh=mesh, stencil=[-1, 0])
+        interpolation=HighOrder(mesh, Stencil([-1, 0]), order=2)
 )
-integration.integrate(endTime=1)
-print(integration.l2error())
+
+integration.integrate(endTime=integration.dt)
+integration.results[0].dumpTo('build/0.dat')
+integration.results[1].dumpTo('build/dt.dat')
+integration.numeric.dumpTo('build/1.dat')
+print('l2error', integration.l2error())
 

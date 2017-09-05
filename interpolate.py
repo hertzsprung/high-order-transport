@@ -1,3 +1,8 @@
+import numpy as np
+
+from basis import *
+from moments import *
+
 class Upwind:
     def __call__(self, rho, i):
         return rho[i-1]
@@ -26,9 +31,12 @@ class Linear:
         return weight_l*l + weight_r*r
 
 class HighOrder:
-    def __init__(self, order, mesh, stencil):
-        pass
+    def __init__(self, mesh, stencil, order):
+        basis = TotalOrder(order)
+        self.faceMoments = FaceMoments(mesh, basis)
+        self.matrix = MomentsMatrix(mesh, basis, stencil)
 
     def __call__(self, rho, i):
-        return rho[i-1]
+        cp = self.matrix.coefficients(rho, i)
+        return np.dot(cp, self.faceMoments.integrateOver(i))
 

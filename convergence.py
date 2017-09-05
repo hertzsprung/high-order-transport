@@ -8,21 +8,15 @@ from initial import *
 from integration import *
 from interpolate import *
 from spacing import *
+from stencil import *
 
-def orderOfConvergence(nxs):
+def orderOfConvergence(nxs, initialiser):
     dxs = []
     errors = []
 
     for nx in nxs:
         print(nx)
-        integration = Integration(
-                mesh=Mesh(nx, SmoothNonuniform()),
-                Co=0.5,
-                u=1,
-                tracer=SineWave().tracer,
-                ddt=RungeKutta(stages=2),
-                interpolation=Linear()
-        )
+        integration = initialiser(nx)
         integration.integrate(endTime=1)
         dxs += [np.min(integration.mesh.dx)]
         errors += [integration.l2error()]
@@ -31,4 +25,16 @@ def orderOfConvergence(nxs):
     m, c = np.linalg.lstsq(A, np.log(errors))[0]
     return m
 
-print("convergence", orderOfConvergence(nxs=reversed([2**n for n in range(4,9)])))
+def initialiser(nx):
+    mesh = Mesh(nx, Uniform())
+    return Integration(
+            mesh=mesh,
+            Co=0.5,
+            u=1,
+            tracer=SineWave().tracer,
+            ddt=RungeKutta(stages=2),
+            interpolation=HighOrder(mesh, Stencil([-1, 0]), order=2)
+    )
+
+nxs = reversed([2**n for n in range(4,9)])
+print("convergence", orderOfConvergence(nxs, initialiser))

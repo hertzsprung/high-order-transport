@@ -47,18 +47,18 @@ where $c_\vect{p}$ are unknown polynomial coefficients, $\vect{x}_0$ is the face
 \begin{align}
 	c_{\vect{p}} \left( \vect{x} - \vect{x}_0 \right)^\vect{p} = c_\vect{p} \prod_{d=1}^D \left( x_d - x_{0_d} \right)^{p_d}
 \end{align}
-As an example, the polynomials $\vect{p}$ in two dimensions $(x, y)$ with $\Mag{\vect{p}} \leq P$ are $(0, 0)$, $(1, 0)$ and $(0, 1)$, hence the two-dimensional polynomial interpolant for a total polynomial order $P = 1$ is
+As an example, the exponents $\vect{p}$ in two dimensions $(x, y)$ with $\Mag{\vect{p}} \leq P$ are $(0, 0)$, $(1, 0)$ and $(0, 1)$, hence the two-dimensional polynomial interpolant for a total polynomial order $P = 1$ is
 \begin{align}
 	\psi = c_1 + c_2 \left( x - x_0 \right) + c_3 \left( y - y_0 \right)
 \end{align}
 
-Substituting \eqref{eqn:interpolant} into \eqref{eqn:advect} we obtain the following expression for the flux through face $f$
+Replacing $\phi$ in \eqref{eqn:advect} with $\psi$ in \eqref{eqn:interpolant} we obtain the following expression for the flux through face $f$
 \begin{align}
 	\int_{A_f} \phi \vect{u} \cdot \vect{n} dA = \vect{u} \cdot \Sf \sum_{\Mag{\vect{p}} \leq P} c_{\vect{p}} \int_{A_f} \left(\vect{x} - \vect{x}_0 \right)^\vect{p} dA \label{eqn:face-flux}
 \end{align}
 where $\Sf = \int_{A_f} \vect{n} dA$.  Therefore, we can calculate fluxes by finding the the polynomial coefficients $c_\vect{p}$.
 
-We establish some stencil that comprises cells in the vicinity of face $f$.  We do not impose any particular method for finding this stencil, we only insist that it contains at least as many cells as there are unknown polynomial coefficients.  In addition, we assume that the domain is periodic so that boundary conditions do not complicate our description.  For every cell in the stencil of face $f$ we require that
+We establish some stencil that comprises cells in the vicinity of face $f$.  We do not impose any particular method for finding this stencil here, we only insist that it contains at least as many cells as there are unknown polynomial coefficients.  In addition, we assume that the domain is periodic so that boundary conditions do not complicate our description.  For every cell in the stencil of face $f$ we require that
 \begin{align}
 	\langle \psi \rangle_V = \langle \phi \rangle_V \label{eqn:equal-volumes}
 \end{align}
@@ -71,7 +71,7 @@ Using equations~\eqref{eqn:interpolant} and \eqref{eqn:volume-average} we can re
 	\frac{1}{\moment_V^\vect{0}} \sum_{\Mag{\vect{p}} \leq P} c_\vect{p} \moment_V^\vect{p} = \langle \phi \rangle_V
 \end{align}
 where $\moment_V^\vect{p} = \int_V \left( \vect{x} - \vect{x}_0 \right)^\vect{p} dV$ is the $\vect{p}$th moment of volume $V$, and the zeroth moment $\moment_V^\vect{0}$ is equal to the volume.
-For $m$ polynomials and a stencil with $n$ cells we can write the linear system
+For $m$ polynomial terms and a stencil with $n$ cells we can write the linear system
 \begin{align}
 	\begin{bmatrix}
 		\moment_{V_1}^{\vect{p}_1}/\moment_{V_1}^\vect{0} & \cdots & \moment_{V_1}^{\vect{p}_m}/\moment_{V_1}^\vect{0} \\

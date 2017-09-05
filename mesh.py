@@ -15,7 +15,7 @@ class Mesh:
         return self.C[i % self.nx]
 
     def faceCentre(self, i):
-        return self.Cf[i % (self.nx+1)]
+        return self.Cf[i % self.nx]
 
 class ScalarField:
     def __init__(self, mesh, rho):
