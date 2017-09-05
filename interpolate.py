@@ -31,10 +31,10 @@ class Linear:
         return weight_l*l + weight_r*r
 
 class HighOrder:
-    def __init__(self, mesh, stencil, order):
+    def __init__(self, mesh, stencil, weighting, order):
         basis = TotalOrder(order)
         self.faceMoments = FaceMoments(mesh, basis)
-        self.matrix = MomentsMatrix(mesh, basis, stencil)
+        self.matrix = MomentsMatrix(mesh, basis, stencil, weighting)
 
     def __call__(self, rho, i):
         cp = self.matrix.coefficients(rho, i)

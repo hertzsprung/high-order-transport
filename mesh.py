@@ -30,6 +30,12 @@ class ScalarField:
 
         return cls(mesh, rho)
 
+    def min(self):
+        return np.min(self.rho)
+
+    def max(self):
+        return np.max(self.rho)
+
     def __getitem__(self, i):
         return self.rho[i % self.mesh.nx]
 

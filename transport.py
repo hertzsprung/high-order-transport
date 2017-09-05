@@ -7,8 +7,10 @@ from interpolate import *
 from simulation import *
 from spacing import *
 from stencil import *
+from weighting import *
 
 mesh = Mesh(nx=16, spacing=Uniform())
+stencil = Stencil([-2, -1, 0])
 
 simulation = Simulation(
         mesh=mesh,
@@ -16,7 +18,11 @@ simulation = Simulation(
         u=1,
         tracer=CosSquared().tracer,
         ddt=RungeKutta(stages=2),
-        interpolation=HighOrder(mesh, Stencil([-1, 0]), order=1)
+        interpolation=HighOrder(
+            mesh,
+            stencil,
+            InverseDistanceWeighting(mesh, stencil),
+            order=2)
 )
 
 simulation.integrate(endTime=1)

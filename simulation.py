@@ -17,9 +17,13 @@ class Simulation:
         self.results.append(rho)
         rhoAnalytic = rho
 
+        dts = 0
         t = 0
         while t < endTime:
+            dts += 1
             rho = self.ddt(rho, -self.div, self.dt) 
+            print("timesteps={dts}\tmin={min}\tmax={max}".format(
+                dts=dts, min=rho.min(), max=rho.max()))
             self.results.append(rho)
             t += self.dt
 
