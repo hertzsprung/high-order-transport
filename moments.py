@@ -19,16 +19,19 @@ class MomentsMatrix:
 
     def initialiseInverseMatrix(self, index):
         M = np.empty((len(self.stencil), len(self.basis.terms)))
+
+        faceCentres = self.stencil.relativeFaceCentres(self.mesh, index)
         
         for row, i in enumerate(index + self.stencil.indices):
             for col, term in enumerate(self.basis.terms):
-                M[row,col] = term.integrate().evaluate(
-                        self.mesh.faceCentre(i),
-                        self.mesh.faceCentre(i+1),
-                        self.mesh.cellCentre(i))
+                M[row,col] = term.integrate(
+                        faceCentres[row], faceCentres[row+1])
                 M[row,col] /= self.mesh.dx[i % self.mesh.cells]
 
-        print('cond', np.linalg.cond(M))
+        print('M', M)
+        print('Minv', np.linalg.pinv(M))
+        print('sum(Minv)', np.sum(np.linalg.pinv(M)))
+        print('cond(M)', np.linalg.cond(M))
 
         return np.linalg.pinv(M)
 

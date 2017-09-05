@@ -43,7 +43,7 @@ All of this is based on the work by \citet{devendran2014}.  Starting with the fl
 \intertext{Replace $\phi$ by a polynomial interpolant $\psi$}
 	\psi = \sum_{\Mag{\vect{p}} \leq P} c_{\vect{p}} \left(\vect{x} - \vect{x}_0 \right)^\vect{p} \label{eqn:interpolant}
 \end{align}
-where $c_\vect{p}$ are unknown polynomial coefficients, $\vect{x}_0$ is the face centre and $P$ is the total polynomial order.  Note that we use the multi-index notation $\Mag{\vect{p}} = p_1 + \ldots + p_n$ and
+where $c_\vect{p}$ are unknown polynomial coefficients, $\vect{x}_0$ is the centre of the target face, and $P$ is the total polynomial order.  Note that we use the multi-index notation $\Mag{\vect{p}} = p_1 + \ldots + p_n$ and
 \begin{align}
 	c_{\vect{p}} \left( \vect{x} - \vect{x}_0 \right)^\vect{p} = c_\vect{p} \prod_{d=1}^D \left( x_d - x_{0_d} \right)^{p_d}
 \end{align}

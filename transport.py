@@ -14,14 +14,17 @@ simulation = Simulation(
         mesh=mesh,
         Co=0.5,
         u=1,
-        tracer=SineWave().tracer,
+        tracer=CosSquared().tracer,
         ddt=RungeKutta(stages=2),
-        interpolation=HighOrder(mesh, Stencil([-1, 0]), order=2)
+        interpolation=HighOrder(mesh, Stencil([-1, 0]), order=1)
 )
 
-simulation.integrate(endTime=simulation.dt)
+simulation.integrate(endTime=1)
 simulation.results[0].dumpTo('build/0.dat')
-simulation.results[1].dumpTo('build/dt.dat')
-simulation.numeric.dumpTo('build/1.dat')
+simulation.results[-1].dumpTo('build/1.dat')
+
+for i, r in enumerate(simulation.results[1:-1]):
+    r.dumpTo('build/{i}.dt.dat'.format(i=i+1))
+
 print('l2error', simulation.l2error())
 
