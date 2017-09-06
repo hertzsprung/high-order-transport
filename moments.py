@@ -30,6 +30,7 @@ class MomentsMatrix:
                 A[row,col] /= self.mesh.dx[i % self.mesh.cells]
 
         print()
+        print('Moments matrix for cell {i}'.format(i=index))
         print('A', A)
         A = np.dot(self.weighting(index), A)
         print('A weighted', A)

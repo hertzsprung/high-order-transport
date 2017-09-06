@@ -17,6 +17,7 @@ class Simulation:
         self.results.append(rho)
         rhoAnalytic = rho
 
+        print()
         dts = 0
         t = 0
         while t < endTime:
