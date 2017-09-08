@@ -9,7 +9,7 @@ from spacing import *
 from stencil import *
 from weighting import *
 
-mesh = Mesh(nx=16, spacing=Uniform())
+mesh = Mesh(nx=32, spacing=SmoothNonuniform())
 stencil = Stencil([-2, -1, 0])
 
 simulation = Simulation(
@@ -17,7 +17,7 @@ simulation = Simulation(
         Co=0.5,
         u=1,
         tracer=CosSquared().tracer,
-        ddt=RungeKutta(stages=2),
+        ddt=RungeKutta4(),
         interpolation=HighOrder(
             mesh,
             stencil,
