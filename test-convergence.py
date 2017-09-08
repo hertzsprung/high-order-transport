@@ -19,7 +19,7 @@ class Initialiser:
         self.order = order
 
     def __call__(self, nx):
-        mesh = Mesh(nx, Uniform())
+        mesh = Mesh(nx, SmoothNonuniform())
         return Simulation(
                 mesh=mesh,
                 Co=0.5,
@@ -43,7 +43,7 @@ initialisers = [
 
 for initialiser in initialisers:
     convergence = Convergence(
-            [2**n for n in range(4,8)],
+            [2**n for n in range(4,9)],
             initialiser)
 
     print(
