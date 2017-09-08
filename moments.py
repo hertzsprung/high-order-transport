@@ -5,7 +5,9 @@ class FaceMoments:
         self.basis = basis
 
     def integrateOver(self, i):
-        return np.full(len(self.basis.terms), fill_value=1)
+        faceMoments = np.zeros(len(self.basis.terms))
+        faceMoments[0] = 1
+        return faceMoments
 
 class MomentsMatrix:
     def __init__(self, mesh, basis, stencil, weighting):
@@ -41,7 +43,7 @@ class MomentsMatrix:
         print('sum(Ainv)', np.sum(Ainv))
         print('cond(A)', np.linalg.cond(A))
 
-        return np.linalg.pinv(A)
+        return Ainv
 
     def coefficients(self, rho, i):
         stencilValues = rho[i + self.stencil]

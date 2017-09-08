@@ -1,6 +1,11 @@
 import numpy as np
 
 class Stencil:
+    '''
+    Initialise a Stencil instance with relative cell indices where
+    -1 and 0 are the adjacent cells upwind and downwind of the target face
+    respectively.
+    '''
     def __init__(self, indices):
         self.indices = np.array(indices)
 
@@ -43,3 +48,6 @@ class Stencil:
 
     def __radd__(self, other):
         return other + self.indices
+
+    def __repr__(self):
+        return str(self.indices)

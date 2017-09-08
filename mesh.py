@@ -51,6 +51,9 @@ class ScalarField:
     def __neg__(self):
         return ScalarField(self.mesh, -self.rho)
 
+    def __repr__(self):
+        return str(self.rho)
+
     def dumpTo(self, filename):
         with open(filename, 'w') as file:
             for C, rho in zip(self.mesh.C, self.rho):

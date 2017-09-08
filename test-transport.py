@@ -21,8 +21,8 @@ simulation = Simulation(
         interpolation=HighOrder(
             mesh,
             stencil,
-            UniformWeighting(stencil),
-#            InverseDistanceWeighting(mesh, stencil),
+#            UniformWeighting(stencil),
+            InverseDistanceWeighting(mesh, stencil),
             order=2)
 )
 
