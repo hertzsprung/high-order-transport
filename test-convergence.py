@@ -25,7 +25,7 @@ class Initialiser:
                 Co=0.5,
                 u=1,
                 tracer=CosSquared().tracer,
-                ddt=RungeKutta(stages=2),
+                ddt=RungeKutta4(),
                 interpolation=HighOrder(
                     mesh,
                     self.stencil,
@@ -34,11 +34,11 @@ class Initialiser:
         )
 
 initialisers = [
-        Initialiser(Stencil([-2, -1, 0]), 1),
         Initialiser(Stencil([-2, -1, 0]), 2),
         Initialiser(Stencil([-2, -1, 0]), 3),
         Initialiser(Stencil([-3, -2, -1, 0]), 2),
         Initialiser(Stencil([-3, -2, -1, 0]), 3),
+        Initialiser(Stencil([-3, -2, -1, 0]), 4)
 ]
 
 for initialiser in initialisers:
