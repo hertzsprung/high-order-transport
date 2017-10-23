@@ -30,22 +30,31 @@ class Tetrahedron:
         p_exponents = self._vectors_summing_to(p)
         q_exponents = self._vectors_summing_to(q)
         r_exponents = self._vectors_summing_to(r)
-        return [np.array(k_ij) for k_ij in itertools.product(p_exponents, q_exponents, r_exponents)]
+        return [np.array(k_ij) for k_ij in \
+                itertools.product(p_exponents, q_exponents, r_exponents)]
 
     def _vectors_summing_to(self, x):
-        return [e for e in itertools.product(range(x+1), repeat=3) if np.sum(e) == x]
+        return [e for e in \
+                itertools.product(range(x+1), repeat=3) if np.sum(e) == x]
 
     def _factorial_term(self, p, q, r, k_ij):
         k = p + q + r
         return  math.factorial(p) * math.factorial(q) * math.factorial(r) * \
                 np.prod([math.factorial(np.sum(k_ij[:,j])) for j in range(3)]) \
                 / \
-                (math.factorial(k+3) * np.prod([math.factorial(e) for e in k_ij.flat]))
+                (math.factorial(k+3) * \
+                    np.prod([math.factorial(e) for e in k_ij.flat]))
     
     def _vertex_powers(self, k_ij):
-        return  self.a[0] ** k_ij[0, 0] * self.a[1] ** k_ij[0, 1] * self.a[2] ** k_ij[0, 2] * \
-                self.b[0] ** k_ij[1, 0] * self.b[1] ** k_ij[1, 1] * self.b[2] ** k_ij[1, 2] * \
-                self.c[0] ** k_ij[2, 0] * self.c[1] ** k_ij[2, 1] * self.c[2] ** k_ij[2, 2]
+        return  self.a[0] ** k_ij[0, 0] * \
+                self.a[1] ** k_ij[0, 1] * \
+                self.a[2] ** k_ij[0, 2] * \
+                self.b[0] ** k_ij[1, 0] * \
+                self.b[1] ** k_ij[1, 1] * \
+                self.b[2] ** k_ij[1, 2] * \
+                self.c[0] ** k_ij[2, 0] * \
+                self.c[1] ** k_ij[2, 1] * \
+                self.c[2] ** k_ij[2, 2]
 
     def __str__(self):
         return 'Tetrahedron([0 0 0], ' + str(self.a) + ', ' + \
