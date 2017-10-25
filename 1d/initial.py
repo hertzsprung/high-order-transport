@@ -4,7 +4,7 @@ class SineWave:
     def tracer(self, mesh, i):
        return np.sin(2*np.pi*mesh.C[i])
 
-class TruncatedSine:
+class TruncatedSineWave:
     def tracer(self, mesh, i):
         return np.sin(2*np.pi*mesh.C[i]) if mesh.C[i] <= 0.5 else 0
 
