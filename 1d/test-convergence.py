@@ -19,14 +19,14 @@ class Initialiser:
         self.order = order
 
     def __call__(self, nx):
-        mesh = Mesh(nx, SmoothNonuniform())
+        mesh = Mesh(nx, Uniform())
         return Simulation(
                 mesh=mesh,
                 Co=0.5,
                 u=1,
-                tracer=CosSquared().tracer,
+                tracer=SineWave().tracer,
                 ddt=RungeKutta4(),
-                interpolation=HighOrder(
+                interpolation=PointwisePolynomial(
                     mesh,
                     self.stencil,
                     InverseDistanceWeighting(mesh, self.stencil),

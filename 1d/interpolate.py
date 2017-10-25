@@ -30,6 +30,40 @@ class Linear:
 
         return weight_l*l + weight_r*r
 
+class PointwisePolynomial:
+    def __init__(self, mesh, stencil, weighting, order):
+        self.mesh = mesh
+        self.stencil = stencil
+        self.weighting = weighting
+        self.Ainv = np.empty(self.mesh.cells, dtype='O')
+        self.basis = TotalOrder(order)
+
+        for i in range(mesh.cells):
+            self.Ainv[i] = self.initialiseInverseMatrix(i)
+
+    def initialiseInverseMatrix(self, index):
+        A = np.empty((len(self.stencil), len(self.basis.terms)))
+
+        cellCentres = self.stencil.relativeCellCentres(self.mesh, index)
+        
+        for row, i in enumerate(index + self.stencil.indices):
+            for col, term in enumerate(self.basis.terms):
+                A[row, col] = term(cellCentres[row])
+
+        print('A', A)
+        A = np.dot(self.weighting(index), A)
+        print('A weighted', A)
+        Ainv = np.linalg.pinv(A)
+        Ainv = np.dot(Ainv, self.weighting(index))
+
+        print('Ainv', Ainv)
+        return Ainv
+
+    def __call__(self, rho, i):
+        stencilValues = rho[i + self.stencil]
+        return np.dot(self.Ainv[i % self.mesh.cells][0], stencilValues)
+
+
 class HighOrder:
     def __init__(self, mesh, stencil, weighting, order):
         basis = TotalOrder(order)

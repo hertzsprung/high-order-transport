@@ -15,12 +15,13 @@ plot 'build/convergence.order2.stencil3.dat' using 1:2 lw 2 title '3-point stenc
      'build/convergence.order2.stencil4.dat' using 1:2 lw 2 title '4-point stencil, linear', \
      'build/convergence.order3.stencil4.dat' using 1:2 lw 2 title '4-point stencil, quadratic', \
      'build/convergence.order4.stencil4.dat' using 1:2 lw 2 title '4-point stencil, cubic', \
-     1e1*x lc 0 dt 1 lw 2 title 'x', \
-     1e2*x**2 lc 0 dt 2 lw 2 title 'x^2', \
-     1e3*x**3 lc 0 dt 3 lw 2 title 'x^3', \
-     1e4*x**4 lc 0 dt 4 lw 2 title 'x^4'
+     x lc 0 dt 1 lw 2 title 'x', \
+     1e1*x**2 lc 0 dt 2 lw 2 title 'x^2', \
+     1e2*x**3 lc 0 dt 3 lw 2 title 'x^3', \
+     5e2*x**4 lc 0 dt 4 lw 2 title 'x^4'
 
      # for uniform meshes
-     #1e1*x**2 lc 0 dt 2 lw 2, \
-     #1e2*x**3 lc 0 dt 3 lw 2, \
-     #5e2*x**4 lc 0 dt 4 lw 2
+     #1e1*x lc 0 dt 1 lw 2 title 'x', \
+     #1e2*x**2 lc 0 dt 2 lw 2 title 'x^2', \
+     #1e3*x**3 lc 0 dt 3 lw 2 title 'x^3', \
+     #1e4*x**4 lc 0 dt 4 lw 2 title 'x^4'

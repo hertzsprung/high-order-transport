@@ -26,6 +26,23 @@ class Stencil:
 
         return np.array(Cs)
 
+    def relativeCellCentres(self, mesh, index):
+        origin = mesh.faceCentre(index)
+
+        Cs = []
+
+        for i in self.indices:
+            C = mesh.cellCentre(index + i)
+            if i < 0 and C > origin:
+                C -= 1
+
+            if i > 0 and C < origin:
+                C += 1
+
+            Cs += [C]
+
+        return np.array(Cs) - origin
+
     def relativeFaceCentres(self, mesh, index):
         origin = mesh.faceCentre(index)
 

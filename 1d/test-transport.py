@@ -10,20 +10,19 @@ from stencil import *
 from weighting import *
 
 mesh = Mesh(nx=32, spacing=SmoothNonuniform())
-stencil = Stencil([-2, -1, 0])
+stencil = Stencil([-3, -2, -1, 0])
 
 simulation = Simulation(
         mesh=mesh,
         Co=0.5,
         u=1,
-        tracer=CosSquared().tracer,
+        tracer=TruncatedSine().tracer,
         ddt=RungeKutta4(),
-        interpolation=HighOrder(
+        interpolation=PointwisePolynomial(
             mesh,
             stencil,
-#            UniformWeighting(stencil),
             InverseDistanceWeighting(mesh, stencil),
-            order=2)
+            order=3)
 )
 
 simulation.integrate(endTime=1)
