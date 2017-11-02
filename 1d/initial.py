@@ -1,5 +1,9 @@
 import numpy as np
 
+class Gaussian:
+    def tracer(self, mesh, i, width=80, centre=0.5):
+        return np.exp(-width*(mesh.C[i]-centre)**2)
+
 class SineWave:
     def tracer(self, mesh, i):
        return np.sin(2*np.pi*mesh.C[i])
