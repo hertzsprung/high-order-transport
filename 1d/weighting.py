@@ -15,7 +15,7 @@ class InverseDistanceWeighting:
         for i in range(mesh.cells):
             w = []
             cellCentres = stencil.cellCentres(mesh, i)
-            cellCentres -= mesh.faceCentre(i)
+            cellCentres -= mesh.cellCentre(i-1)
 
             for cellCentre, stencilI in zip(
                     cellCentres, i + stencil.indices):
@@ -23,8 +23,7 @@ class InverseDistanceWeighting:
 
                 w += [1 if distance < 0.5 else (2*distance)**-5]
 
-
-            print(w)
+            print('weightings', i, w)
             self.W[i] = np.diag(w)
 
     def __call__(self, i):

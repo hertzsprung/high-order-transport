@@ -10,6 +10,9 @@ class Term:
     def __init__(self, exponent):
         self.exponent = exponent
 
+    def __call__(self, value):
+        return value**self.exponent
+
     def integrate(self, leftFace, rightFace):
         return sp.integrate(
                 Term.x**self.exponent,

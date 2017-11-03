@@ -9,21 +9,20 @@ from spacing import *
 from stencil import *
 from weighting import *
 
-mesh = Mesh(nx=16, spacing=Uniform())
-stencil = Stencil([-2, -1, 0])
+mesh = Mesh(nx=32, spacing=SmoothNonuniform())
+stencil = Stencil([-3, -2, -1, 0])
 
 simulation = Simulation(
         mesh=mesh,
         Co=0.5,
         u=1,
-        tracer=CosSquared().tracer,
-        ddt=RungeKutta(stages=2),
-        interpolation=HighOrder(
+        tracer=TruncatedSine().tracer,
+        ddt=RungeKutta4(),
+        interpolation=PointwisePolynomial(
             mesh,
             stencil,
-            UniformWeighting(stencil),
-#            InverseDistanceWeighting(mesh, stencil),
-            order=2)
+            InverseDistanceWeighting(mesh, stencil),
+            order=3)
 )
 
 simulation.integrate(endTime=1)
