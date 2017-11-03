@@ -39,7 +39,7 @@
 \newcommand{\vect}{\mathbf}
 \newcommand{\moment}{\mathfrak{m}}
 
-\title{cubicFit and highOrderFit matrix equations}
+\title{Comparison of one-dimensional cubicFit and highOrderFit}
 \author{James Shaw}
 
 \begin{document}
@@ -168,7 +168,7 @@ If the equispaced cells each have $\moment^0 = 1$ with the cell centres position
 	\text{.}
 	\label{eq:highOrderMatrix}
 \end{align}
-Notice how the matrix in equation~\ref{eq:highOrderMatrix} is similar to, but not equal to, the matrix in equation~\ref{eq:cubicFitMatrix}.
+Notice how the matrix in equation~\eqref{eq:highOrderMatrix} is similar to, but not equal to, the matrix in equation~\eqref{eq:cubicFitMatrix}.
 
 \section*{Taylor series analysis}
 
@@ -196,31 +196,78 @@ Notice how the matrix in equation~\ref{eq:highOrderMatrix} is similar to, but no
 	\label{fig:flux}
 \end{figure}
 
-Let's construct a Taylor series approximation centred at $\phi_L$ for the stencil points $\phi_{j-2} \ldots \phi_{j+1}$ (figure~\ref{fig:flux})
+To find a polynomial that interpolates the 4-point upwind-biased stencil we construct Taylor series approximations centred at $\phi_L$ for the stencil points $\phi_{j-2} \ldots \phi_{j+1}$
 \begin{align}
-	\phi_{j-2} &= \phi_L - \frac{5 \Delta x}{2} \phi'_L + \frac{25 \Delta x^2}{8} \phi''_L - \frac{125 \Delta x^3}{48} \phi'''_L + \frac{625 \Delta x^4}{384} \phi''''_L + \mathcal{O}({\Delta x^5}) \label{eq:jm2} \\
-	\phi_{j-1} &= \phi_L - \frac{3 \Delta x}{2} \phi'_L + \frac{9 \Delta x^2}{8} \phi''_L - \frac{27 \Delta x^3}{48} \phi'''_L + \frac{81 \Delta x^4}{384} \phi''''_L + \mathcal{O}({\Delta x^5}) \label{eq:jm1} \\
-	\phi_j &= \phi_L - \frac{\Delta x}{2} \phi'_L + \frac{\Delta x^2}{8} \phi''_L - \frac{\Delta x^3}{48} \phi'''_L + \frac{\Delta x^4}{384} \phi''''_L + \mathcal{O}(\Delta x^5) \label{eq:j} \\
-	\phi_{j+1} &= \phi_L + \frac{\Delta x}{2} \phi'_L + \frac{\Delta x^2}{8} \phi''_L + \frac{\Delta x^3}{48} \phi'''_L + \frac{\Delta x^4}{384} \phi''''_L + \mathcal{O}(\Delta x^5) \label{eq:jp1}
-%
-\intertext{combining \eqref{eq:j} and \eqref{eq:jp1}}
-%
-\phi_j + \phi_{j+1} &= 2 \phi_L + \frac{\Delta x^2}{4} \phi''_L + \frac{\Delta x^4}{192} \phi''''_L + \mathcal{O}(\Delta x^5) \label{eq:jjp1}
-%
-\intertext{and combining \eqref{eq:jm2} and \eqref{eq:jm1}}
-%
-5 \phi_{j-1} - 3 \phi_{j-2} &= 2 \phi_L - \frac{15 \Delta x^2}{4} \phi''_L + 5 \Delta x^3 \phi'''_L - 256/64 \Delta x^4 \phi''''_L + \mathcal{O}(\Delta x^5) \label{eq:jm1jm2}
-%
-\intertext{then combine \eqref{eq:jjp1} and \eqref{eq:jm1jm2}}
-%
-15 \phi_j + 15 \phi_{j+1} + 5 \phi_{j-1} - 3 \phi_{j-2} &= 32 \phi_L + \mathcal{O}(\Delta x^3) \text{.}
+	\begin{bmatrix}
+		1 & -\frac{5}{2} & \frac{1}{2!} \left(-\frac{5}{2}\right)^2 & \frac{1}{3!} \left(-\frac{5}{2}\right)^3 \\[4pt]
+		1 & -\frac{3}{2} & \frac{1}{2!} \left(-\frac{3}{2}\right)^2 & \frac{1}{3!} \left(-\frac{3}{2}\right)^3 \\[4pt]
+		1 & -\frac{1}{2} & \frac{1}{2!} \left(-\frac{1}{2}\right)^2 & \frac{1}{3!} \left(-\frac{1}{2}\right)^3 \\[4pt]
+		1 & \frac{1}{2} & \frac{1}{2!} \left(\frac{1}{2}\right)^2 & \frac{1}{3!} \left(\frac{1}{2}\right)^3
+	\end{bmatrix}
+	\begin{bmatrix}
+		\phi_L \\
+		\phi'_L \\
+		\phi''_L \\
+		\phi'''_L
+	\end{bmatrix}
+	&=
+	\begin{bmatrix}
+		\phi_{j-2} \\
+		\phi_{j-1} \\
+		\phi_j \\
+		\phi_{j+1}
+	\end{bmatrix}
+	\text{.}
 \end{align}
-Construct the same Taylor series approximation centred at $\phi_R$ for the stencil points $\phi_{j-1} \ldots \phi_{j+2}$, and substitute into the transport equation
+Solving this system results in the fourth-order accurate approximation, 
 \begin{align}
-	\frac{\partial \phi}{\partial t} &= - u \frac{\phi_R - \phi_L}{\Delta x} \\
-	&= -u \frac{3 \phi_{j-2} - 8 \phi_{j-1} - 10 \phi_j + 15 \phi_{j+2} + \mathcal{O}(\Delta x^3)}{32 \Delta x}
+	\phi_L = \frac{1}{16} \phi_{j-2} - \frac{5}{16} \phi_{j-1} + \frac{15}{16} \phi_j + \frac{5}{16} \phi_{j+1} + \mathcal{O}(\Delta x^5)
 \end{align}
-Hence, this discretisation is second-order accurate.  So how, then, can higher-order terms be cancelled to achieve higher than second-order accuracy?
+The approximate flux divergence (figure~\ref{fig:flux}) is then 
+\begin{align}
+	\phi_R - \phi_L = -\frac{1}{16} \phi_{j-2} + \frac{6}{16} \phi_{j-1} - \frac{20}{16} \phi_j + \frac{20}{16} \phi_{j+1} + \frac{5}{16} \phi_{j+2} \label{eq:cubicFitCoeffs}
+\end{align}
+but this not a fourth-order accurate flux divergence approximation as we will see next.
+A fourth-order accurate approximation to the flux divergence is derived from a Taylor series approximation of $\partial \phi / \partial x$ centred at $\phi_{j+1}$ (figure~\ref{fig:flux}),
+
+\begin{align}
+	\begin{bmatrix}
+		1 & -3 & \frac{1}{2!} \left(-3\right)^2 & \frac{1}{3!} \left(-3\right)^3 & \frac{1}{4!} \left(-3\right)^4 \\[4pt]
+		1 & -2 & \frac{1}{2!} \left(-2\right)^2 & \frac{1}{3!} \left(-2\right)^3 & \frac{1}{4!} \left(-2\right)^4 \\[4pt]
+		1 & -1 & \frac{1}{2!} \left(-1\right)^2 & \frac{1}{3!} \left(-1\right)^3 & \frac{1}{4!} \left(-1\right)^4 \\[4pt]
+		1 & 0 & \frac{1}{2!} 0^2 & \frac{1}{3!} 0^3 & \frac{1}{4!} 0^4 \\[4pt]
+		1 & 1 & \frac{1}{2!} 1^2 & \frac{1}{3!} 1^3 & \frac{1}{4!} 1^4
+	\end{bmatrix}
+	\begin{bmatrix}
+		\phi_{j+1} \\[4pt]
+		\phi'_{j+1} \\[4pt]
+		\phi''_{j+1} \\[4pt]
+		\phi'''_{j+1} \\[4pt]
+		\phi''''_{j+1}
+	\end{bmatrix}
+	&=
+	\begin{bmatrix}
+		\phi_{j-2} \\
+		\phi_{j-1} \\
+		\phi_j \\
+		\phi_{j+1} \\
+		\phi_{j+2}
+	\end{bmatrix} \label{eq:highOrderFluxDiv}
+\intertext{which yields}
+\left. \frac{\partial \phi}{\partial x} \right|_{j+1} = -\frac{1}{12} \phi_{j-2} + \frac{6}{12} \phi_{j-1} - \frac{18}{12} \phi_j + \frac{10}{12} \phi_{j+1} + \frac{3}{12} \phi_{j+2} + \mathcal{O}(\Delta x^4) \text{.} \label{eq:highOrderFluxDivCoeffs}
+\end{align}
+To find the fourth-order face flux we invert the matrix in equation~\eqref{eq:highOrderMatrix} and find that
+\begin{align}
+	\phi_L = \frac{1}{12} \phi_{j-2} - \frac{5}{12} \phi_{j-1} + \frac{13}{12} \phi_j + \frac{3}{12} \phi_{j+1} \text{.} \label{eq:highOrderFlux}
+\end{align}
+Using equation~\eqref{eq:highOrderFluxDiv} and equation~\eqref{eq:highOrderFlux} we can verify that $\left. \partial \phi / \partial x \right|_{j+1} = \phi_R - \phi_L + \mathcal{O}(\Delta x^4)$ as desired (figure~\ref{fig:fluxDivComparison}).
+
+\begin{figure}
+	\centering
+	\includegraphics[width=5in]{interim-results/taylor-series.png}
+	\caption{Flux divergence cofficients using a 5-point Taylor series approximation (equation~\ref{eq:highOrderFluxDivCoeffs}), cubicFit approximation (equation~\ref{eq:cubicFitCoeffs}) and highOrderFit approximation (equation~\ref{eq:highOrderFlux}).}
+	\label{fig:fluxDivComparison}
+\end{figure}
 
 \bibliographystyle{ametsoc2014}
 \bibliography{matrix-comparison}
