@@ -38,6 +38,6 @@ timePrecision   6;
 runTimeModifiable no;
 adjustTimeStep no;
 maxCo          1;
-libs           ("libfiniteVolumeAtmos.so");
+libs           ("libhighOrderFit.so" "libfiniteVolumeHighOrderFit.so");
 
 // ************************************************************************* //
