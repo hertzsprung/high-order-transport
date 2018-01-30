@@ -25,8 +25,8 @@ ap 0;
 squeeze 1;
 expand 1;
 
-nx 120;
-nz 120;
+nx 45;
+nz 45;
 
 vertices
 (

@@ -36,7 +36,21 @@ gradSchemes
 divSchemes
 {
     default             none;
-    div(phiGhost,TGhost) Gauss cubicUpwindCPCFit Cartesian;
+    //div(phiGhost,TGhost) Gauss linearUpwind grad(TGhost);
+    div(phiGhost,TGhost)          Gauss highOrderFit
+        cartesian
+        (
+            (0 0 0)
+            (1 0 0)
+            (2 0 0)
+            (3 0 0)
+            (0 0 1)
+            (1 0 1)
+            (0 0 2)
+            (2 0 1)
+            (1 0 2)
+        )
+        inverseDistanceMultipliers;
 }
 
 laplacianSchemes
